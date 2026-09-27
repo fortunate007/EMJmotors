@@ -1,0 +1,15 @@
+{
+  "name": "emj-motors",
+  "version": "2.0.0",
+  "description": "EMJ Motors Ltd - full stack car dealership site with admin backend",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "multer": "^2.0.0",
+    "bcryptjs": "^2.4.3"
+  }
+}
