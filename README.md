@@ -6,11 +6,6 @@ drivetrains), search/filter/sort, sold-status tracking, and a WhatsApp
 contact button on every listing.
 
 
-
-Then open:
-- Site:  http://localhost:3000
-- Admin: http://localhost:3000/admin   (default password: yffgwhjqdfgh)
-
 ## Files
 - server.js    — entire backend + frontend (routes, HTML, CSS, JS)
 - package.json — dependencies
