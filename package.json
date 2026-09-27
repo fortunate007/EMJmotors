@@ -1,11 +1,9 @@
 {
   "name": "emj-motors",
-  "version": "2.0.0",
-  "description": "EMJ Motors Ltd - full stack car dealership site with admin backend",
+  "version": "4.0.0",
+  "description": "EMJ Motors Ltd - full car dealership platform",
   "main": "server.js",
-  "scripts": {
-    "start": "node server.js"
-  },
+  "scripts": { "start": "node server.js" },
   "dependencies": {
     "express": "^4.19.2",
     "express-session": "^1.18.0",

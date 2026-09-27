@@ -103,18 +103,57 @@
       "sold": false
     }
   ],
+  "offers": [
+    {
+      "id": 1,
+      "title": "Free QISJ Mileage Verification",
+      "badge": "LIMITED TIME",
+      "description": "Book any foreign used vehicle this month and get free QISJ mileage verification worth KSh 15,000.",
+      "ctaText": "Claim Offer",
+      "ctaLink": "https://wa.me/254727073958",
+      "image": "",
+      "expiry": "",
+      "active": true,
+      "order": 1
+    },
+    {
+      "id": 2,
+      "title": "0% Interest for 3 Months",
+      "badge": "HOT DEAL",
+      "description": "Pay 50% deposit and enjoy zero interest on your balance for the first three months.",
+      "ctaText": "Learn How",
+      "ctaLink": "/how-to-buy",
+      "image": "",
+      "expiry": "",
+      "active": true,
+      "order": 2
+    },
+    {
+      "id": 3,
+      "title": "Free First Service",
+      "badge": "NEW",
+      "description": "Every vehicle purchased this quarter comes with a complimentary first service.",
+      "ctaText": "Book Now",
+      "ctaLink": "https://wa.me/254727073958",
+      "image": "",
+      "expiry": "",
+      "active": true,
+      "order": 3
+    }
+  ],
   "settings": {
     "name": "EMJ MOTORS LTD",
-    "tagline": "PREMIUM IMPORTS • NAIROBI",
+    "tagline": "SALES • IMPORTS • FINANCING • NAIROBI",
     "phone1": "+254 799 566 458",
     "phone2": "+254 727 073 958",
-    "wa": "254799566458",
+    "wa": "254727073958",
     "email": "info@emjmotors.co.ke",
     "address": "Ngong Road, Kilimani, Nairobi",
     "locShort": "Ngong Road",
-    "about": "Nairobi's trusted dealer for foreign used cars. QISJ verified, 50% deposit, flexible balance.",
-    "colorGold": "#e8b923",
-    "colorBg": "#0b0b0c"
+    "about": "Nairobi's full-service dealership — brand new, foreign used, locally used and custom imports on order. QISJ verified. Financing arranged.",
+    "colorGold": "#d4a017",
+    "colorBg": "#f8f7f3"
   },
-  "nextId": 7
+  "nextId": 7,
+  "nextOfferId": 4
 }
