@@ -13,7 +13,7 @@ const FUEL_TYPES=['Petrol','Diesel','Hybrid','Electric'];
 const DRIVETRAINS=['FWD','RWD','AWD','4WD'];
 const TRANSMISSIONS=['Automatic','Manual'];
 
-const defaultSettings={name:'EMJ MOTORS LTD',tagline:'SALES • IMPORTS • FINANCING • NAIROBI',phone1:'+254 799 566 458',phone2:'+254 727 073 958',wa:'254727073958',email:'info@emjmotors.co.ke',address:'Ngong Road, Kilimani, Nairobi',locShort:'Ngong Road',about:"Nairobi's full-service dealership — brand new, foreign used, locally used and custom imports on order. QISJ verified. Financing arranged.",colorGold:'#d4a017',colorBg:'#f8f7f3'};
+const defaultSettings={name:'EMJ MOTORS LTD',tagline:'SALES • IMPORTS • FINANCING • NAIROBI',phone1:'+254 799 566 458',phone2:'+254 727 073 958',wa:'254727073958',email:'info@emjmotors.co.ke',address:'Ngong Road, Kilimani, Nairobi',locShort:'Ngong Road',about:"Nairobi's full-service dealership — brand new, foreign used, locally used and custom imports on order. QISJ verified. Financing arranged.",colorGold:'#d4a017',colorBg:'#f8f7f3',facebook:'https://facebook.com/emjmotors',instagram:'https://instagram.com/emjmotors',tiktok:'https://tiktok.com/@emjmotors'};
 const sampleCars=[
 {id:1,make:'Toyota',model:'Axio',year:2015,price:1450000,mileage:65000,body:'Sedan',condition:'Foreign Used',trans:'Automatic',fuel:'Petrol',drivetrain:'FWD',color:'White',desc:'Well maintained, single owner, full service history. QISJ verified mileage and auction sheet available on request.',photos:[],sold:false},
 {id:2,make:'Nissan',model:'X-Trail',year:2016,price:2350000,mileage:58000,body:'SUV',condition:'Foreign Used',trans:'Automatic',fuel:'Petrol',drivetrain:'AWD',color:'Silver',desc:'Spacious family SUV, 4WD, clean interior, recently serviced.',photos:[],sold:false},
@@ -124,15 +124,15 @@ header{position:sticky;top:0;z-index:60;background:rgba(255,255,255,.94);backdro
 .call-btn:hover{background:var(--gold);}
 @media(max-width:700px){.brand h1{font-size:16px;}.brand .tag{font-size:9px;letter-spacing:2px;}.call-btn{padding:10px 14px;font-size:12px;}.call-btn span.lbl{display:none;}.logo-circle{width:42px;height:42px;font-size:16px;}}
 @media(max-width:400px){.brand .tag{display:none;}}
-.hero{background:linear-gradient(135deg,#fdfcf7 0%,#f5efe0 100%);padding:72px 0 56px;position:relative;overflow:hidden;}
-.hero::before{content:"";position:absolute;top:-120px;right:-120px;width:460px;height:460px;border-radius:50%;background:radial-gradient(circle,rgba(212,160,23,.18),transparent 70%);pointer-events:none;}
-.hero::after{content:"";position:absolute;bottom:-100px;left:-100px;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(212,160,23,.10),transparent 70%);pointer-events:none;}
+.hero{background:#14141a url('https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=2000&q=80') center/cover no-repeat;padding:120px 0 100px;position:relative;overflow:hidden;min-height:72vh;display:flex;align-items:center;}
+.hero::before{content:"";position:absolute;inset:0;background:linear-gradient(95deg,rgba(10,10,14,.90) 0%,rgba(10,10,14,.62) 50%,rgba(10,10,14,.28) 100%);z-index:1;pointer-events:none;}
+.hero::after{display:none;}
 .hero .wrap{position:relative;z-index:2;}
-.badge{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);color:var(--text-soft);padding:9px 16px;border-radius:999px;font-size:12.5px;font-weight:700;margin-bottom:22px;box-shadow:var(--shadow-sm);}
+.badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);color:#fff;padding:9px 16px;border-radius:999px;font-size:12.5px;font-weight:700;margin-bottom:22px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);}
 .dot{width:8px;height:8px;border-radius:50%;background:var(--good);display:inline-block;animation:pulse 2s infinite;}
-.hero h2{font-size:56px;line-height:1.03;color:var(--text);margin-bottom:18px;}
+.hero h2{font-size:56px;line-height:1.03;color:#fff;margin-bottom:18px;text-shadow:0 2px 24px rgba(0,0,0,.4);}
 .hero h2 .gold{display:block;color:var(--gold);}
-.hero p{max-width:640px;color:var(--muted);margin-bottom:28px;font-size:16px;line-height:1.65;}
+.hero p{max-width:640px;color:rgba(255,255,255,.90);margin-bottom:28px;font-size:16px;line-height:1.65;}
 @media(max-width:700px){.hero{padding:48px 0 40px;}.hero h2{font-size:34px;}.hero p{font-size:14.5px;}}
 .filters{background:#fff;border-radius:16px;padding:22px;display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr 1fr 1fr auto;gap:14px;align-items:end;margin-top:10px;border:1px solid var(--line);box-shadow:var(--shadow-md);}
 @media(max-width:1100px){.filters{grid-template-columns:1fr 1fr 1fr;}}
@@ -228,12 +228,12 @@ footer{background:var(--dark);padding:54px 0 24px;color:#e8e8ec;}
 .modal-desc{font-size:14px;color:var(--text-soft);margin-bottom:18px;white-space:pre-line;line-height:1.7;}
 .modal-actions{display:flex;gap:10px;flex-wrap:wrap;}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--good);color:#fff;padding:13px 24px;border-radius:999px;font-weight:700;font-size:14px;z-index:300;display:none;box-shadow:0 10px 30px rgba(22,163,74,.4);}
-.page-header{background:linear-gradient(135deg,#fff 0%,var(--bg-soft) 100%);padding:56px 0 44px;border-bottom:1px solid var(--line);position:relative;overflow:hidden;}
-.page-header::before{content:"";position:absolute;top:-100px;right:-100px;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(212,160,23,.15),transparent 70%);}
+.page-header{background:#14141a url('https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=2000&q=80') center/cover no-repeat;padding:100px 0 80px;border-bottom:1px solid var(--line);position:relative;overflow:hidden;min-height:52vh;display:flex;align-items:center;}
+.page-header::before{content:"";position:absolute;inset:0;background:linear-gradient(95deg,rgba(10,10,14,.88) 0%,rgba(10,10,14,.60) 50%,rgba(10,10,14,.25) 100%);z-index:1;}
 .page-header .wrap{position:relative;z-index:2;}
-.page-header h1{font-size:40px;color:var(--text);margin-bottom:10px;}
-.page-header p{color:var(--muted);max-width:680px;font-size:15px;line-height:1.7;}
-.page-header .crumb{color:var(--gold);font-size:11.5px;letter-spacing:3px;font-weight:800;text-transform:uppercase;margin-bottom:12px;}
+.page-header h1{font-size:40px;color:#fff;margin-bottom:10px;text-shadow:0 2px 20px rgba(0,0,0,.45);}
+.page-header p{color:rgba(255,255,255,.88);max-width:680px;font-size:15px;line-height:1.7;}
+.page-header .crumb{color:var(--gold);font-size:11.5px;letter-spacing:3px;font-weight:800;text-transform:uppercase;margin-bottom:12px;text-shadow:0 1px 8px rgba(0,0,0,.5);}
 @media(max-width:700px){.page-header{padding:40px 0 32px;}.page-header h1{font-size:28px;}}
 .content-section{padding:50px 0;}
 .content-block{background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:32px;margin-bottom:20px;box-shadow:var(--shadow-sm);}
@@ -353,6 +353,22 @@ footer{background:var(--dark);padding:54px 0 24px;color:#e8e8ec;}
 .pill-active{background:var(--good);color:#fff;font-size:10px;font-weight:900;padding:3px 9px;border-radius:999px;margin-left:8px;letter-spacing:1px;}
 .pill-off{background:var(--muted);color:#fff;font-size:10px;font-weight:900;padding:3px 9px;border-radius:999px;margin-left:8px;letter-spacing:1px;}
 .chk-inline{display:flex;align-items:center;gap:10px;grid-column:1/-1;margin-bottom:14px;color:var(--text-soft);font-size:13.5px;font-weight:600;cursor:pointer;}
+.foot-social{display:flex;gap:10px;margin-top:16px;}
+.foot-social a{width:40px;height:40px;border-radius:11px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;color:#fff;transition:.2s;margin-bottom:0;}
+.foot-social a:hover{background:var(--gold);border-color:var(--gold);transform:translateY(-3px);}
+.foot-social a svg{width:18px;height:18px;fill:currentColor;}
+.sidebar-social{display:flex;gap:10px;justify-content:center;margin-bottom:14px;}
+.sidebar-social a{width:40px;height:40px;border-radius:50%;background:#fff;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--text);transition:.2s;}
+.sidebar-social a:hover{background:var(--gold);color:#fff;border-color:var(--gold);transform:translateY(-2px);}
+.sidebar-social a svg{width:17px;height:17px;fill:currentColor;}
+.contact-social{display:flex;gap:10px;margin-top:20px;}
+.contact-social a{width:44px;height:44px;border-radius:12px;background:#fff;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--text);transition:.2s;}
+.contact-social a:hover{background:var(--gold);color:#fff;border-color:var(--gold);transform:translateY(-3px);}
+.contact-social a svg{width:20px;height:20px;fill:currentColor;}
+.offer-social{display:flex;gap:10px;justify-content:center;margin-top:18px;position:relative;z-index:2;}
+.offer-social a{width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.35);display:flex;align-items:center;justify-content:center;color:#fff;transition:.2s;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
+.offer-social a:hover{background:#fff;color:var(--gold);border-color:#fff;transform:translateY(-3px);}
+.offer-social a svg{width:20px;height:20px;fill:currentColor;}
 `;
 const WA_SVG='<svg class="wa-icon" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M16.04 3C9.37 3 3.96 8.36 3.96 15c0 2.2.6 4.28 1.66 6.06L4 29l8.15-2.14a12.9 12.9 0 0 0 3.89.61c6.67 0 12.08-5.36 12.08-12S22.7 3 16.04 3zm0 21.9c-1.28 0-2.53-.24-3.7-.72l-.27-.1-4.84 1.27 1.3-4.72-.18-.29a9.83 9.83 0 0 1-1.53-5.34c0-5.46 4.46-9.9 9.96-9.9 5.5 0 9.96 4.44 9.96 9.9s-4.46 9.9-9.96 9.9zm5.46-7.4c-.3-.15-1.77-.87-2.05-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.25-.46-2.38-1.46-.88-.78-1.47-1.75-1.65-2.05-.17-.3-.02-.46.13-.61.14-.14.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.6-.92-2.2-.24-.58-.49-.5-.67-.5h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.47 0 1.46 1.07 2.87 1.22 3.07.15.2 2.1 3.2 5.08 4.49.71.3 1.26.49 1.69.62.71.23 1.36.2 1.87.12.57-.08 1.77-.72 2.02-1.42.25-.7.25-1.3.17-1.42-.07-.12-.27-.2-.57-.35z"/></svg>';
 
@@ -361,6 +377,9 @@ const PUBLIC_JS=`
 function money(n){return 'KSh '+Number(n).toLocaleString();}
 function placeholderImg(make){const t=encodeURIComponent(make||'CAR');return "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect width='400' height='300' fill='%23f0ede4'/><text x='50%' y='50%' fill='%23a89f88' font-size='24' text-anchor='middle' dy='.3em' font-family='Arial'>"+t+"</text></svg>";}
 const WA_ICON=${JSON.stringify(WA_SVG)};
+const SVG_FB='<svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>';
+const SVG_IG='<svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>';
+const SVG_TT='<svg viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>';
 let SETTINGS={},CARS=[],META={};
 function initTicker(){const items=document.querySelectorAll('.ticker-item');if(!items.length)return;let i=0;setInterval(()=>{items[i].classList.remove('active');i=(i+1)%items.length;items[i].classList.add('active');},3800);}
 function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('sidebarOverlay').classList.add('open');document.body.style.overflow='hidden';}
@@ -404,6 +423,9 @@ function applySettings(){
   const cw=document.getElementById('cWa');if(cw)cw.innerHTML='<a href="https://wa.me/'+SETTINGS.wa+'" target="_blank">'+SETTINGS.phone2+'</a>';
   const ce=document.getElementById('cEmail');if(ce)ce.innerHTML='<a href="mailto:'+SETTINGS.email+'">'+SETTINGS.email+'</a>';
   const ca=document.getElementById('cAddress');if(ca)ca.textContent=SETTINGS.address;
+  [['ctFb',SETTINGS.facebook,SVG_FB],['ctIg',SETTINGS.instagram,SVG_IG],['ctTt',SETTINGS.tiktok,SVG_TT],['ofFb',SETTINGS.facebook,SVG_FB],['ofIg',SETTINGS.instagram,SVG_IG],['ofTt',SETTINGS.tiktok,SVG_TT]].forEach(function(item){var el=document.getElementById(item[0]);if(el){el.href=item[1]||'#';el.innerHTML=item[2];}});
+  [['ftFb',SETTINGS.facebook,SVG_FB],['ftIg',SETTINGS.instagram,SVG_IG],['ftTt',SETTINGS.tiktok,SVG_TT],['sbFb',SETTINGS.facebook,SVG_FB],['sbIg',SETTINGS.instagram,SVG_IG],['sbTt',SETTINGS.tiktok,SVG_TT]].forEach(function(item){var el=document.getElementById(item[0]);if(el){el.href=item[1]||'#';el.innerHTML=item[2];}});
+  const tsc=document.getElementById('tickSocial');if(tsc){tsc.href=SETTINGS.instagram||SETTINGS.facebook||SETTINGS.tiktok||'#';}
 }
 function populateFilters(){
   const fm=document.getElementById('fMake');if(fm)fm.innerHTML='<option value="">All Makes</option>'+META.makes.map(m=>'<option>'+m+'</option>').join('');
@@ -540,11 +562,14 @@ function fillSettingsForm(){
   document.getElementById('setLocShort').value=SETTINGS.locShort;
   document.getElementById('setColorGold').value=SETTINGS.colorGold;
   document.getElementById('setAbout').value=SETTINGS.about;
+  document.getElementById('setFb').value=SETTINGS.facebook||'';
+  document.getElementById('setIg').value=SETTINGS.instagram||'';
+  document.getElementById('setTt').value=SETTINGS.tiktok||'';
 }
 async function saveSettings(){
   const body={name:val('setName'),tagline:val('setTagline'),phone1:val('setPhone1'),
     wa:val('setWa').replace(/\\D/g,''),phone2:val('setPhone2'),email:val('setEmail'),
-    address:val('setAddress'),locShort:val('setLocShort'),colorGold:val('setColorGold'),about:val('setAbout')};
+    address:val('setAddress'),locShort:val('setLocShort'),colorGold:val('setColorGold'),about:val('setAbout'),facebook:val('setFb'),instagram:val('setIg'),tiktok:val('setTt')};
   const r=await fetch('/api/settings',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
   SETTINGS=await r.json();showToast('Settings saved');
 }
@@ -673,7 +698,7 @@ const SIDEBAR_HTML=`
     <a href="/qisj">QISJ Mileage Verification <span>›</span></a>
     <a href="/login">Login | Register <span>›</span></a>
   </nav>
-  <div class="sidebar-footer">© 2026 EMJ Motors Ltd · <a href="/admin">Admin</a></div>
+  <div class="sidebar-footer"><div class="sidebar-social"><a id="sbFb" href="#" target="_blank" aria-label="Facebook"></a><a id="sbIg" href="#" target="_blank" aria-label="Instagram"></a><a id="sbTt" href="#" target="_blank" aria-label="TikTok"></a></div><div>© 2026 EMJ Motors Ltd · <a href="/admin">Admin</a></div></div>
 </aside>`;
 
 const TICKER_HTML=`
@@ -682,6 +707,7 @@ const TICKER_HTML=`
   <div class="ticker-item"><a id="tickPhone" href="tel:+254799566458">📞 Call: +254 799 566 458</a></div>
   <div class="ticker-item"><a id="tickWa" href="https://wa.me/254727073958" target="_blank">💬 WhatsApp: +254 727 073 958</a></div>
   <div class="ticker-item"><a id="tickEmail" href="mailto:info@emjmotors.co.ke">✉️ info@emjmotors.co.ke</a></div>
+  <div class="ticker-item"><a id="tickSocial" href="#" target="_blank">📱 Follow us @emjmotors</a></div>
   <div class="ticker-item"><a id="tickAddr" href="/contact">📍 Ngong Road, Kilimani, Nairobi</a></div>
 </div></div>`;
 
@@ -717,7 +743,7 @@ ${content}
   <div class="foot-grid">
     <div><div class="foot-brand"><div class="logo-circle">E</div>
       <div><b id="footBrandName">EMJ MOTORS LTD</b><div style="color:var(--gold);font-size:11px;letter-spacing:2px;">SALES • IMPORTS • FINANCING</div></div>
-    </div><p id="footAbout"></p></div>
+    </div><p id="footAbout"></p><div class="foot-social"><a id="ftFb" href="#" target="_blank" aria-label="Facebook"></a><a id="ftIg" href="#" target="_blank" aria-label="Instagram"></a><a id="ftTt" href="#" target="_blank" aria-label="TikTok"></a></div></div>
     <div><h4>Explore</h4>
       <a href="/">Home</a><a href="/products">Stock</a><a href="/about">About Us</a>
       <a href="/how-to-buy">How To Buy</a><a href="/offers">Special Offers</a>
@@ -916,7 +942,13 @@ function offersContent(){
   return `
 ${pageHeader('Deals','Special Offers','Limited-time deals on selected vehicles and services from EMJ Motors.')}
 <section style="padding-top:34px;"><div class="wrap">
-  <div class="offer-banner"><h2>🔥 LIMITED TIME DEALS</h2><p>Ask about our interest-free 3-month balance plan on any vehicle below</p></div>
+  <div class="offer-banner"><h2>🔥 LIMITED TIME DEALS</h2><p>Ask about our interest-free 3-month balance plan on any vehicle below</p>
+  <div class="offer-social">
+    <a id="ofFb" href="#" target="_blank" aria-label="Facebook"></a>
+    <a id="ofIg" href="#" target="_blank" aria-label="Instagram"></a>
+    <a id="ofTt" href="#" target="_blank" aria-label="TikTok"></a>
+  </div>
+  </div>
   <div class="offers-grid" id="offersGrid"></div>
   <div class="section-head" style="margin-top:50px;"><h2>FEATURED STOCK</h2><div class="stock-badge"><span class="dot"></span> <span id="availableCount">0</span> Showing</div></div>
   <div class="cars-grid" id="carsGrid"></div>
@@ -950,6 +982,11 @@ ${pageHeader('Get in Touch','Contact Us','Visit our showroom, call us, or messag
       <div class="contact-info-item"><div class="ic">✉️</div><div><b>Email</b><span id="cEmail"></span></div></div>
       <div class="contact-info-item"><div class="ic">📍</div><div><b>Showroom</b><span id="cAddress">Ngong Road, Kilimani, Nairobi</span></div></div>
       <div class="contact-info-item"><div class="ic">🕐</div><div><b>Business Hours</b><span>Mon–Sat: 8:30 AM – 6:00 PM<br>Sunday: By appointment</span></div></div>
+      <div class="contact-social">
+        <a id="ctFb" href="#" target="_blank" aria-label="Facebook"></a>
+        <a id="ctIg" href="#" target="_blank" aria-label="Instagram"></a>
+        <a id="ctTt" href="#" target="_blank" aria-label="TikTok"></a>
+      </div>
     </div>
     <form class="contact-form" onsubmit="sendContactForm(event)">
       <h2>Send us a message</h2>
@@ -1032,6 +1069,9 @@ function adminHTML(){
         <div><label>Address</label><input id="setAddress"></div>
         <div><label>Location Short</label><input id="setLocShort"></div>
         <div><label>Accent Colour</label><input id="setColorGold" type="color"></div>
+        <div><label>Facebook URL</label><input id="setFb" placeholder="https://facebook.com/..."></div>
+        <div><label>Instagram URL</label><input id="setIg" placeholder="https://instagram.com/..."></div>
+        <div><label>TikTok URL</label><input id="setTt" placeholder="https://tiktok.com/@..."></div>
         <div class="full"><label>About Text</label><textarea id="setAbout"></textarea></div>
       </div>
       <button class="btn btn-gold" onclick="saveSettings()">💾 Save Settings</button>
