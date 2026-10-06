@@ -1,3 +1,4 @@
+require('dotenv').config();
 /* ============ EMJ MOTORS LTD — v4.0 ============ */
 const express=require('express'),session=require('express-session'),multer=require('multer'),bcrypt=require('bcryptjs'),fs=require('fs'),path=require('path');
 const PORT=process.env.PORT||3000;
