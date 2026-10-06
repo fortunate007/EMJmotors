@@ -3,11 +3,14 @@
   "version": "4.0.0",
   "description": "EMJ Motors Ltd - full car dealership platform",
   "main": "server.js",
-  "scripts": { "start": "node server.js" },
+  "scripts": {
+    "start": "node server.js"
+  },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "express": "^4.19.2",
     "express-session": "^1.18.0",
     "multer": "^2.0.0",
-    "bcryptjs": "^2.4.3"
+    "pg": "^8.23.1"
   }
 }
