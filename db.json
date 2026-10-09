@@ -83,7 +83,7 @@
       "color": "Grey",
       "desc": "AMG line, one owner, dealer serviced throughout.",
       "photos": [],
-      "sold": false
+      "sold": true
     },
     {
       "id": 6,
@@ -100,7 +100,7 @@
       "color": "Green",
       "desc": "Symmetrical AWD, great for upcountry runs, new tyres.",
       "photos": [],
-      "sold": false
+      "sold": true
     }
   ],
   "offers": [

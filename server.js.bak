@@ -27,18 +27,9 @@ const sampleOffers=[
 {id:2,title:'0% Interest for 3 Months',badge:'HOT DEAL',description:'Pay 50% deposit and enjoy zero interest on your balance for the first three months.',ctaText:'Learn How',ctaLink:'/how-to-buy',image:'',expiry:'',active:true,order:2},
 {id:3,title:'Free First Service',badge:'NEW',description:'Every vehicle purchased this quarter comes with a complimentary first service.',ctaText:'Book Now',ctaLink:'https://wa.me/254727073958',image:'',expiry:'',active:true,order:3}];
 
-const {Pool}=require('pg');
-const pool=new Pool({connectionString:process.env.DATABASE_URL,ssl:{rejectUnauthorized:false}});
-const dbReady=pool.query('CREATE TABLE IF NOT EXISTS site_data (id int PRIMARY KEY, data jsonb NOT NULL)');
-async function loadDB(){
-  await dbReady;
-  const r=await pool.query('SELECT data FROM site_data WHERE id=1');
-  if(!r.rows.length){
-    const i={cars:sampleCars,offers:sampleOffers,settings:defaultSettings,nextId:sampleCars.length+1,nextOfferId:sampleOffers.length+1};
-    await pool.query('INSERT INTO site_data(id,data) VALUES(1,$1) ON CONFLICT (id) DO NOTHING',[JSON.stringify(i)]);
-    return i;
-  }
-  const db=r.rows[0].data;
+function loadDB(){
+  if(!fs.existsSync(DB_FILE)){const i={cars:sampleCars,offers:sampleOffers,settings:defaultSettings,nextId:sampleCars.length+1,nextOfferId:sampleOffers.length+1};fs.writeFileSync(DB_FILE,JSON.stringify(i,null,2));return i;}
+  const db=JSON.parse(fs.readFileSync(DB_FILE,'utf8'));
   if(!db.settings)db.settings=defaultSettings;
   if(!db.cars)db.cars=[];
   if(!db.offers)db.offers=sampleOffers;
@@ -46,7 +37,7 @@ async function loadDB(){
   if(!db.nextOfferId)db.nextOfferId=db.offers.reduce((m,c)=>Math.max(m,c.id),0)+1;
   return db;
 }
-async function saveDB(db){await pool.query('INSERT INTO site_data(id,data) VALUES(1,$1) ON CONFLICT (id) DO UPDATE SET data=EXCLUDED.data',[JSON.stringify(db)]);}
+function saveDB(db){fs.writeFileSync(DB_FILE,JSON.stringify(db,null,2));}
 
 const app=express();
 app.use(express.json());
@@ -54,21 +45,18 @@ app.use('/uploads',express.static(UPLOAD_DIR));
 app.use(session({secret:process.env.SESSION_SECRET||'emj-secret',resave:false,saveUninitialized:false,cookie:{maxAge:1000*60*60*8}}));
 const passwordHash=bcrypt.hashSync(ADMIN_PASSWORD,8);
 function requireAdmin(rq,rs,nx){if(rq.session&&rq.session.isAdmin)return nx();return rs.status(401).json({error:'Not authenticated'});}
-const cloudinary=require('cloudinary').v2;
-cloudinary.config({cloud_name:process.env.CLOUDINARY_CLOUD_NAME,api_key:process.env.CLOUDINARY_API_KEY,api_secret:process.env.CLOUDINARY_API_SECRET});
-const upload=multer({storage:multer.memoryStorage(),limits:{fileSize:8*1024*1024}});
-const uploadToCloud=f=>new Promise((ok,no)=>cloudinary.uploader.upload_stream({folder:'emjmotors'},(e,r)=>e?no(e):ok(r.secure_url)).end(f.buffer));
-process.on('unhandledRejection',e=>console.error('Unhandled:',e));
+const storage=multer.diskStorage({destination:(rq,f,cb)=>cb(null,UPLOAD_DIR),filename:(rq,f,cb)=>cb(null,Date.now()+'-'+Math.round(Math.random()*1e9)+path.extname(f.originalname))});
+const upload=multer({storage,limits:{fileSize:8*1024*1024}});
 
-app.post('/api/login',async (rq,rs)=>{const{password}=rq.body||{};if(password&&bcrypt.compareSync(password,passwordHash)){rq.session.isAdmin=true;return rs.json({ok:true});}rs.status(401).json({error:'Incorrect password'});});
-app.post('/api/logout',async (rq,rs)=>{rq.session.destroy(()=>rs.json({ok:true}));});
-app.get('/api/session',async (rq,rs)=>{rs.json({isAdmin:!!(rq.session&&rq.session.isAdmin)});});
-app.get('/api/meta',async (rq,rs)=>rs.json({makes:MAKES,bodyTypes:BODY_TYPES,conditions:CONDITIONS,fuelTypes:FUEL_TYPES,drivetrains:DRIVETRAINS,transmissions:TRANSMISSIONS}));
-app.get('/api/settings',async (rq,rs)=>rs.json((await loadDB()).settings));
-app.put('/api/settings',requireAdmin,async (rq,rs)=>{const db=(await loadDB());db.settings={...db.settings,...rq.body};await saveDB(db);rs.json(db.settings);});
+app.post('/api/login',(rq,rs)=>{const{password}=rq.body||{};if(password&&bcrypt.compareSync(password,passwordHash)){rq.session.isAdmin=true;return rs.json({ok:true});}rs.status(401).json({error:'Incorrect password'});});
+app.post('/api/logout',(rq,rs)=>{rq.session.destroy(()=>rs.json({ok:true}));});
+app.get('/api/session',(rq,rs)=>{rs.json({isAdmin:!!(rq.session&&rq.session.isAdmin)});});
+app.get('/api/meta',(rq,rs)=>rs.json({makes:MAKES,bodyTypes:BODY_TYPES,conditions:CONDITIONS,fuelTypes:FUEL_TYPES,drivetrains:DRIVETRAINS,transmissions:TRANSMISSIONS}));
+app.get('/api/settings',(rq,rs)=>rs.json(loadDB().settings));
+app.put('/api/settings',requireAdmin,(rq,rs)=>{const db=loadDB();db.settings={...db.settings,...rq.body};saveDB(db);rs.json(db.settings);});
 
-app.get('/api/cars',async (rq,rs)=>{
-  const db=(await loadDB());let l=db.cars;
+app.get('/api/cars',(rq,rs)=>{
+  const db=loadDB();let l=db.cars;
   const{make,body,condition,fuel,minPrice,maxPrice,q,sold,sort}=rq.query;
   if(make)l=l.filter(c=>c.make===make);
   if(body)l=l.filter(c=>c.body===body);
@@ -85,18 +73,18 @@ app.get('/api/cars',async (rq,rs)=>{
   if(sort==='newest')l=[...l].sort((a,b)=>b.id-a.id);
   rs.json(l);
 });
-app.get('/api/cars/:id',async (rq,rs)=>{const c=(await loadDB()).cars.find(x=>x.id===+rq.params.id);if(!c)return rs.status(404).json({error:'Not found'});rs.json(c);});
-app.post('/api/cars',requireAdmin,upload.array('photos',12),async (rq,rs)=>{const db=(await loadDB()),b=rq.body;const photos=await Promise.all((rq.files||[]).map(uploadToCloud));const car={id:db.nextId++,make:b.make||'',model:b.model||'',year:+b.year||new Date().getFullYear(),price:+b.price||0,mileage:+b.mileage||0,body:b.body||'Sedan',condition:b.condition||'Foreign Used',trans:b.trans||'Automatic',fuel:b.fuel||'Petrol',drivetrain:b.drivetrain||'FWD',color:b.color||'',desc:b.desc||'',sold:b.sold==='true'||b.sold===true,photos};db.cars.push(car);await saveDB(db);rs.json(car);});
-app.put('/api/cars/:id',requireAdmin,upload.array('photos',12),async (rq,rs)=>{const db=(await loadDB());const i=db.cars.findIndex(c=>c.id===+rq.params.id);if(i===-1)return rs.status(404).json({error:'Not found'});const b=rq.body;const np=await Promise.all((rq.files||[]).map(uploadToCloud));const c=db.cars[i];Object.assign(c,{make:b.make??c.make,model:b.model??c.model,year:b.year?+b.year:c.year,price:b.price?+b.price:c.price,mileage:b.mileage?+b.mileage:c.mileage,body:b.body??c.body,condition:b.condition??c.condition,trans:b.trans??c.trans,fuel:b.fuel??c.fuel,drivetrain:b.drivetrain??c.drivetrain,color:b.color??c.color,desc:b.desc??c.desc,sold:b.sold!==undefined?(b.sold==='true'||b.sold===true):c.sold,photos:np.length?np:c.photos});await saveDB(db);rs.json(c);});
-app.patch('/api/cars/:id/sold',requireAdmin,async (rq,rs)=>{const db=(await loadDB());const c=db.cars.find(x=>x.id===+rq.params.id);if(!c)return rs.status(404).json({error:'Not found'});c.sold=!c.sold;await saveDB(db);rs.json(c);});
-app.delete('/api/cars/:id',requireAdmin,async (rq,rs)=>{const db=(await loadDB());const c=db.cars.find(x=>x.id===+rq.params.id);db.cars=db.cars.filter(x=>x.id!==+rq.params.id);await saveDB(db);if(c)(c.photos||[]).forEach(p=>{const f=path.join(__dirname,p);if(fs.existsSync(f))fs.unlinkSync(f);});rs.json({ok:true});});
+app.get('/api/cars/:id',(rq,rs)=>{const c=loadDB().cars.find(x=>x.id===+rq.params.id);if(!c)return rs.status(404).json({error:'Not found'});rs.json(c);});
+app.post('/api/cars',requireAdmin,upload.array('photos',12),(rq,rs)=>{const db=loadDB(),b=rq.body;const photos=(rq.files||[]).map(f=>'/uploads/'+f.filename);const car={id:db.nextId++,make:b.make||'',model:b.model||'',year:+b.year||new Date().getFullYear(),price:+b.price||0,mileage:+b.mileage||0,body:b.body||'Sedan',condition:b.condition||'Foreign Used',trans:b.trans||'Automatic',fuel:b.fuel||'Petrol',drivetrain:b.drivetrain||'FWD',color:b.color||'',desc:b.desc||'',sold:b.sold==='true'||b.sold===true,photos};db.cars.push(car);saveDB(db);rs.json(car);});
+app.put('/api/cars/:id',requireAdmin,upload.array('photos',12),(rq,rs)=>{const db=loadDB();const i=db.cars.findIndex(c=>c.id===+rq.params.id);if(i===-1)return rs.status(404).json({error:'Not found'});const b=rq.body;const np=(rq.files||[]).map(f=>'/uploads/'+f.filename);const c=db.cars[i];Object.assign(c,{make:b.make??c.make,model:b.model??c.model,year:b.year?+b.year:c.year,price:b.price?+b.price:c.price,mileage:b.mileage?+b.mileage:c.mileage,body:b.body??c.body,condition:b.condition??c.condition,trans:b.trans??c.trans,fuel:b.fuel??c.fuel,drivetrain:b.drivetrain??c.drivetrain,color:b.color??c.color,desc:b.desc??c.desc,sold:b.sold!==undefined?(b.sold==='true'||b.sold===true):c.sold,photos:np.length?np:c.photos});saveDB(db);rs.json(c);});
+app.patch('/api/cars/:id/sold',requireAdmin,(rq,rs)=>{const db=loadDB();const c=db.cars.find(x=>x.id===+rq.params.id);if(!c)return rs.status(404).json({error:'Not found'});c.sold=!c.sold;saveDB(db);rs.json(c);});
+app.delete('/api/cars/:id',requireAdmin,(rq,rs)=>{const db=loadDB();const c=db.cars.find(x=>x.id===+rq.params.id);db.cars=db.cars.filter(x=>x.id!==+rq.params.id);saveDB(db);if(c)(c.photos||[]).forEach(p=>{const f=path.join(__dirname,p);if(fs.existsSync(f))fs.unlinkSync(f);});rs.json({ok:true});});
 
-app.get('/api/offers',async (rq,rs)=>{rs.json((await loadDB()).offers.filter(o=>o.active).sort((a,b)=>(a.order||0)-(b.order||0)));});
-app.get('/api/offers/all',requireAdmin,async (rq,rs)=>{rs.json((await loadDB()).offers.slice().sort((a,b)=>(a.order||0)-(b.order||0)));});
-app.post('/api/offers',requireAdmin,upload.single('image'),async (rq,rs)=>{const db=(await loadDB()),b=rq.body;const o={id:db.nextOfferId++,title:b.title||'',badge:b.badge||'',description:b.description||'',ctaText:b.ctaText||'Learn More',ctaLink:b.ctaLink||'/contact',image:rq.file?await uploadToCloud(rq.file):(b.imageUrl||''),expiry:b.expiry||'',active:b.active==='true'||b.active===true,order:+b.order||0};db.offers.push(o);await saveDB(db);rs.json(o);});
-app.put('/api/offers/:id',requireAdmin,upload.single('image'),async (rq,rs)=>{const db=(await loadDB());const o=db.offers.find(x=>x.id===+rq.params.id);if(!o)return rs.status(404).json({error:'Not found'});const b=rq.body;Object.assign(o,{title:b.title??o.title,badge:b.badge??o.badge,description:b.description??o.description,ctaText:b.ctaText??o.ctaText,ctaLink:b.ctaLink??o.ctaLink,expiry:b.expiry??o.expiry,active:b.active!==undefined?(b.active==='true'||b.active===true):o.active,order:b.order?+b.order:o.order});if(rq.file)o.image=await uploadToCloud(rq.file);else if(b.imageUrl!==undefined)o.image=b.imageUrl;await saveDB(db);rs.json(o);});
-app.patch('/api/offers/:id/toggle',requireAdmin,async (rq,rs)=>{const db=(await loadDB());const o=db.offers.find(x=>x.id===+rq.params.id);if(!o)return rs.status(404).json({error:'Not found'});o.active=!o.active;await saveDB(db);rs.json(o);});
-app.delete('/api/offers/:id',requireAdmin,async (rq,rs)=>{const db=(await loadDB());const o=db.offers.find(x=>x.id===+rq.params.id);db.offers=db.offers.filter(x=>x.id!==+rq.params.id);await saveDB(db);if(o&&o.image&&o.image.startsWith('/uploads/')){const f=path.join(__dirname,o.image);if(fs.existsSync(f))fs.unlinkSync(f);}rs.json({ok:true});});
+app.get('/api/offers',(rq,rs)=>{rs.json(loadDB().offers.filter(o=>o.active).sort((a,b)=>(a.order||0)-(b.order||0)));});
+app.get('/api/offers/all',requireAdmin,(rq,rs)=>{rs.json(loadDB().offers.slice().sort((a,b)=>(a.order||0)-(b.order||0)));});
+app.post('/api/offers',requireAdmin,upload.single('image'),(rq,rs)=>{const db=loadDB(),b=rq.body;const o={id:db.nextOfferId++,title:b.title||'',badge:b.badge||'',description:b.description||'',ctaText:b.ctaText||'Learn More',ctaLink:b.ctaLink||'/contact',image:rq.file?'/uploads/'+rq.file.filename:(b.imageUrl||''),expiry:b.expiry||'',active:b.active==='true'||b.active===true,order:+b.order||0};db.offers.push(o);saveDB(db);rs.json(o);});
+app.put('/api/offers/:id',requireAdmin,upload.single('image'),(rq,rs)=>{const db=loadDB();const o=db.offers.find(x=>x.id===+rq.params.id);if(!o)return rs.status(404).json({error:'Not found'});const b=rq.body;Object.assign(o,{title:b.title??o.title,badge:b.badge??o.badge,description:b.description??o.description,ctaText:b.ctaText??o.ctaText,ctaLink:b.ctaLink??o.ctaLink,expiry:b.expiry??o.expiry,active:b.active!==undefined?(b.active==='true'||b.active===true):o.active,order:b.order?+b.order:o.order});if(rq.file)o.image='/uploads/'+rq.file.filename;else if(b.imageUrl!==undefined)o.image=b.imageUrl;saveDB(db);rs.json(o);});
+app.patch('/api/offers/:id/toggle',requireAdmin,(rq,rs)=>{const db=loadDB();const o=db.offers.find(x=>x.id===+rq.params.id);if(!o)return rs.status(404).json({error:'Not found'});o.active=!o.active;saveDB(db);rs.json(o);});
+app.delete('/api/offers/:id',requireAdmin,(rq,rs)=>{const db=loadDB();const o=db.offers.find(x=>x.id===+rq.params.id);db.offers=db.offers.filter(x=>x.id!==+rq.params.id);saveDB(db);if(o&&o.image&&o.image.startsWith('/uploads/')){const f=path.join(__dirname,o.image);if(fs.existsSync(f))fs.unlinkSync(f);}rs.json({ok:true});});
 
 /* ============ STYLES ============ */
 const STYLE_CSS=`
@@ -1148,19 +1136,19 @@ function adminHTML(){
 }
 
 /* ============ ROUTES ============ */
-app.get('/style.css',async (rq,rs)=>{rs.type('text/css').send(STYLE_CSS);});
-app.get('/app.js',async (rq,rs)=>{rs.type('application/javascript').send(PUBLIC_JS);});
-app.get('/admin.js',async (rq,rs)=>{rs.type('application/javascript').send(ADMIN_JS);});
-app.get('/',async (rq,rs)=>rs.send(layout('Home',homeContent())));
-app.get('/products',async (rq,rs)=>rs.send(layout('Products',productsContent())));
-app.get('/about',async (rq,rs)=>rs.send(layout('About Us',aboutContent())));
-app.get('/how-to-buy',async (rq,rs)=>rs.send(layout('How To Buy',howToBuyContent())));
-app.get('/offers',async (rq,rs)=>rs.send(layout('Special Offers',offersContent())));
-app.get('/faq',async (rq,rs)=>rs.send(layout('FAQ',faqContent())));
-app.get('/contact',async (rq,rs)=>rs.send(layout('Contact Us',contactContent())));
-app.get('/qisj',async (rq,rs)=>rs.send(layout('QISJ Verification',qisjContent())));
-app.get('/login',async (rq,rs)=>rs.send(layout('Login / Register',loginContent())));
-app.get('/admin',async (rq,rs)=>rs.send(adminHTML()));
+app.get('/style.css',(rq,rs)=>{rs.type('text/css').send(STYLE_CSS);});
+app.get('/app.js',(rq,rs)=>{rs.type('application/javascript').send(PUBLIC_JS);});
+app.get('/admin.js',(rq,rs)=>{rs.type('application/javascript').send(ADMIN_JS);});
+app.get('/',(rq,rs)=>rs.send(layout('Home',homeContent())));
+app.get('/products',(rq,rs)=>rs.send(layout('Products',productsContent())));
+app.get('/about',(rq,rs)=>rs.send(layout('About Us',aboutContent())));
+app.get('/how-to-buy',(rq,rs)=>rs.send(layout('How To Buy',howToBuyContent())));
+app.get('/offers',(rq,rs)=>rs.send(layout('Special Offers',offersContent())));
+app.get('/faq',(rq,rs)=>rs.send(layout('FAQ',faqContent())));
+app.get('/contact',(rq,rs)=>rs.send(layout('Contact Us',contactContent())));
+app.get('/qisj',(rq,rs)=>rs.send(layout('QISJ Verification',qisjContent())));
+app.get('/login',(rq,rs)=>rs.send(layout('Login / Register',loginContent())));
+app.get('/admin',(rq,rs)=>rs.send(adminHTML()));
 
 app.listen(PORT,()=>{
   console.log('EMJ Motors is running.');
