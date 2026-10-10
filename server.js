@@ -1,5 +1,6 @@
 require('dotenv').config();
 /* ============ EMJ MOTORS LTD — v4.0 ============ */
+require('express-async-errors');
 const express=require('express'),session=require('express-session'),multer=require('multer'),bcrypt=require('bcryptjs'),fs=require('fs'),path=require('path');
 const PORT=process.env.PORT||3000;
 const ADMIN_PASSWORD=process.env.ADMIN_PASSWORD||'emj2026';
@@ -29,9 +30,10 @@ const sampleOffers=[
 
 const {Pool}=require('pg');
 const pool=new Pool({connectionString:process.env.DATABASE_URL,ssl:{rejectUnauthorized:false}});
-const dbReady=pool.query('CREATE TABLE IF NOT EXISTS site_data (id int PRIMARY KEY, data jsonb NOT NULL)');
+pool.on('error',e=>console.error('POOL ERROR:',e.message));
+let dbReady=null;const initDB=()=>dbReady||(dbReady=pool.query('CREATE TABLE IF NOT EXISTS site_data (id int PRIMARY KEY, data jsonb NOT NULL)').catch(e=>{dbReady=null;throw e;}));
 async function loadDB(){
-  await dbReady;
+  await initDB();
   const r=await pool.query('SELECT data FROM site_data WHERE id=1');
   if(!r.rows.length){
     const i={cars:sampleCars,offers:sampleOffers,settings:defaultSettings,nextId:sampleCars.length+1,nextOfferId:sampleOffers.length+1};
@@ -605,7 +607,7 @@ async function saveCar(){
   fd.append('desc',val('cDesc'));fd.append('sold',document.getElementById('cSold').checked);
   Array.from(document.getElementById('cPhotos').files).forEach(f=>fd.append('photos',f));
   if(editingId){await fetch('/api/cars/'+editingId,{method:'PUT',body:fd});showToast('Car updated');}
-  else{await fetch('/api/cars',{method:'POST',body:fd});showToast('Car added');}
+  else{const r=await fetch('/api/cars',{method:'POST',body:fd});if(r.ok===false){const e=await r.json().catch(()=>({}));showToast('Upload failed: '+(e.error||r.status));return;}showToast('Car added');}
   clearCarForm();await loadAll();
 }
 function editCar(id){
@@ -1162,6 +1164,7 @@ app.get('/qisj',async (rq,rs)=>rs.send(layout('QISJ Verification',qisjContent())
 app.get('/login',async (rq,rs)=>rs.send(layout('Login / Register',loginContent())));
 app.get('/admin',async (rq,rs)=>rs.send(adminHTML()));
 
+app.use((err,rq,rs,nx)=>{console.error('REQUEST ERROR:',err);rs.status(500).json({error:err.message||'Server error'});});
 app.listen(PORT,()=>{
   console.log('EMJ Motors is running.');
 });
