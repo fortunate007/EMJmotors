@@ -30,7 +30,7 @@ const sampleOffers=[
 
 const {createClient}=require('@supabase/supabase-js');
 if(!process.env.SUPABASE_URL||!process.env.SUPABASE_SECRET_KEY)console.error('Missing SUPABASE_URL or SUPABASE_SECRET_KEY in .env');
-const sb=createClient(process.env.SUPABASE_URL,process.env.SUPABASE_SECRET_KEY,{auth:{persistSession:false,autoRefreshToken:false}});
+const sb=createClient(process.env.SUPABASE_URL,process.env.SUPABASE_SECRET_KEY,{auth:{persistSession:false,autoRefreshToken:false},realtime:{transport:require('ws')}});
 const BUCKET='car-photos';
 async function loadDB(){
   const {data,error}=await sb.from('site_data').select('data').eq('id',1).maybeSingle();
