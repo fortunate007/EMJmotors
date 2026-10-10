@@ -28,8 +28,8 @@ const sampleOffers=[
 {id:2,title:'0% Interest for 3 Months',badge:'HOT DEAL',description:'Pay 50% deposit and enjoy zero interest on your balance for the first three months.',ctaText:'Learn How',ctaLink:'/how-to-buy',image:'',expiry:'',active:true,order:2},
 {id:3,title:'Free First Service',badge:'NEW',description:'Every vehicle purchased this quarter comes with a complimentary first service.',ctaText:'Book Now',ctaLink:'https://wa.me/254727073958',image:'',expiry:'',active:true,order:3}];
 
-const {Pool}=require('pg');
-const pool=new Pool({connectionString:process.env.DATABASE_URL,ssl:{rejectUnauthorized:false}});
+const {Pool,neonConfig}=require('@neondatabase/serverless');neonConfig.webSocketConstructor=require('ws');
+const pool=new Pool({connectionString:process.env.DATABASE_URL});
 pool.on('error',e=>console.error('POOL ERROR:',e.message));
 let dbReady=null;const initDB=()=>dbReady||(dbReady=pool.query('CREATE TABLE IF NOT EXISTS site_data (id int PRIMARY KEY, data jsonb NOT NULL)').catch(e=>{dbReady=null;throw e;}));
 async function loadDB(){
