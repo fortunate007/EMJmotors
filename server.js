@@ -54,7 +54,7 @@ async function saveDB(db){const {error}=await sb.from('site_data').upsert({id:1,
 const app=express();
 app.use(express.json());
 app.use('/uploads',express.static(UPLOAD_DIR));
-app.use(session({secret:process.env.SESSION_SECRET||'emj-secret',resave:false,saveUninitialized:false,cookie:{maxAge:1000*60*60*8}}));
+app.set('trust proxy',1);app.use(require('cookie-session')({name:'emj_admin',keys:[process.env.SESSION_SECRET||'emj-secret'],maxAge:1000*60*60*8,sameSite:'lax',httpOnly:true}));
 const passwordHash=bcrypt.hashSync(ADMIN_PASSWORD,8);
 function requireAdmin(rq,rs,nx){if(rq.session&&rq.session.isAdmin)return nx();return rs.status(401).json({error:'Not authenticated'});}
 const upload=multer({storage:multer.memoryStorage(),limits:{fileSize:8*1024*1024}});
@@ -67,7 +67,7 @@ const uploadToCloud=async f=>{
 process.on('unhandledRejection',e=>console.error('Unhandled:',e));
 
 app.post('/api/login',async (rq,rs)=>{const{password}=rq.body||{};if(password&&bcrypt.compareSync(password,passwordHash)){rq.session.isAdmin=true;return rs.json({ok:true});}rs.status(401).json({error:'Incorrect password'});});
-app.post('/api/logout',async (rq,rs)=>{rq.session.destroy(()=>rs.json({ok:true}));});
+app.post('/api/logout',async (rq,rs)=>{rq.session=null;rs.json({ok:true});});
 app.get('/api/session',async (rq,rs)=>{rs.json({isAdmin:!!(rq.session&&rq.session.isAdmin)});});
 app.get('/api/meta',async (rq,rs)=>rs.json({makes:MAKES,bodyTypes:BODY_TYPES,conditions:CONDITIONS,fuelTypes:FUEL_TYPES,drivetrains:DRIVETRAINS,transmissions:TRANSMISSIONS}));
 app.get('/api/settings',async (rq,rs)=>rs.json((await loadDB()).settings));
