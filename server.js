@@ -28,19 +28,20 @@ const sampleOffers=[
 {id:2,title:'0% Interest for 3 Months',badge:'HOT DEAL',description:'Pay 50% deposit and enjoy zero interest on your balance for the first three months.',ctaText:'Learn How',ctaLink:'/how-to-buy',image:'',expiry:'',active:true,order:2},
 {id:3,title:'Free First Service',badge:'NEW',description:'Every vehicle purchased this quarter comes with a complimentary first service.',ctaText:'Book Now',ctaLink:'https://wa.me/254727073958',image:'',expiry:'',active:true,order:3}];
 
-const {Pool,neonConfig}=require('@neondatabase/serverless');neonConfig.webSocketConstructor=require('ws');
-const pool=new Pool({connectionString:process.env.DATABASE_URL});
-pool.on('error',e=>console.error('POOL ERROR:',e.message));
-let dbReady=null;const initDB=()=>dbReady||(dbReady=pool.query('CREATE TABLE IF NOT EXISTS site_data (id int PRIMARY KEY, data jsonb NOT NULL)').catch(e=>{dbReady=null;throw e;}));
+const {createClient}=require('@supabase/supabase-js');
+if(!process.env.SUPABASE_URL||!process.env.SUPABASE_SECRET_KEY)console.error('Missing SUPABASE_URL or SUPABASE_SECRET_KEY in .env');
+const sb=createClient(process.env.SUPABASE_URL,process.env.SUPABASE_SECRET_KEY,{auth:{persistSession:false,autoRefreshToken:false}});
+const BUCKET='car-photos';
 async function loadDB(){
-  await initDB();
-  const r=await pool.query('SELECT data FROM site_data WHERE id=1');
-  if(!r.rows.length){
+  const {data,error}=await sb.from('site_data').select('data').eq('id',1).maybeSingle();
+  if(error)throw error;
+  if(!data){
     const i={cars:sampleCars,offers:sampleOffers,settings:defaultSettings,nextId:sampleCars.length+1,nextOfferId:sampleOffers.length+1};
-    await pool.query('INSERT INTO site_data(id,data) VALUES(1,$1) ON CONFLICT (id) DO NOTHING',[JSON.stringify(i)]);
+    const r=await sb.from('site_data').upsert({id:1,data:i});
+    if(r.error)throw r.error;
     return i;
   }
-  const db=r.rows[0].data;
+  const db=data.data;
   if(!db.settings)db.settings=defaultSettings;
   if(!db.cars)db.cars=[];
   if(!db.offers)db.offers=sampleOffers;
@@ -48,7 +49,7 @@ async function loadDB(){
   if(!db.nextOfferId)db.nextOfferId=db.offers.reduce((m,c)=>Math.max(m,c.id),0)+1;
   return db;
 }
-async function saveDB(db){await pool.query('INSERT INTO site_data(id,data) VALUES(1,$1) ON CONFLICT (id) DO UPDATE SET data=EXCLUDED.data',[JSON.stringify(db)]);}
+async function saveDB(db){const {error}=await sb.from('site_data').upsert({id:1,data:db});if(error)throw error;}
 
 const app=express();
 app.use(express.json());
@@ -56,10 +57,13 @@ app.use('/uploads',express.static(UPLOAD_DIR));
 app.use(session({secret:process.env.SESSION_SECRET||'emj-secret',resave:false,saveUninitialized:false,cookie:{maxAge:1000*60*60*8}}));
 const passwordHash=bcrypt.hashSync(ADMIN_PASSWORD,8);
 function requireAdmin(rq,rs,nx){if(rq.session&&rq.session.isAdmin)return nx();return rs.status(401).json({error:'Not authenticated'});}
-const cloudinary=require('cloudinary').v2;
-cloudinary.config({cloud_name:process.env.CLOUDINARY_CLOUD_NAME,api_key:process.env.CLOUDINARY_API_KEY,api_secret:process.env.CLOUDINARY_API_SECRET});
 const upload=multer({storage:multer.memoryStorage(),limits:{fileSize:8*1024*1024}});
-const uploadToCloud=f=>new Promise((ok,no)=>cloudinary.uploader.upload_stream({folder:'emjmotors'},(e,r)=>e?no(e):ok(r.secure_url)).end(f.buffer));
+const uploadToCloud=async f=>{
+  const name=Date.now()+'-'+Math.round(Math.random()*1e9)+path.extname(f.originalname||'').toLowerCase();
+  const {error}=await sb.storage.from(BUCKET).upload(name,f.buffer,{contentType:f.mimetype,upsert:false});
+  if(error)throw error;
+  return sb.storage.from(BUCKET).getPublicUrl(name).data.publicUrl;
+};
 process.on('unhandledRejection',e=>console.error('Unhandled:',e));
 
 app.post('/api/login',async (rq,rs)=>{const{password}=rq.body||{};if(password&&bcrypt.compareSync(password,passwordHash)){rq.session.isAdmin=true;return rs.json({ok:true});}rs.status(401).json({error:'Incorrect password'});});
