@@ -1170,5 +1170,5 @@ app.get('/admin',async (rq,rs)=>rs.send(adminHTML()));
 
 app.use((err,rq,rs,nx)=>{console.error('REQUEST ERROR:',err);rs.status(500).json({error:err.message||'Server error'});});
 app.listen(PORT,()=>{
-  console.log('EMJ Motors is running.');
+  console.log('EMJ Motors is running on port ' + PORT);
 });
