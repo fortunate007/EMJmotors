@@ -52,6 +52,7 @@ async function loadDB(){
 async function saveDB(db){const {error}=await sb.from('site_data').upsert({id:1,data:db});if(error)throw error;}
 
 const app=express();
+require('./emj-logo.js')(app);
 app.use(express.json());
 app.use('/uploads',express.static(UPLOAD_DIR));
 app.set('trust proxy',1);app.use(require('cookie-session')({name:'emj_admin',keys:[process.env.SESSION_SECRET||'emj-secret'],maxAge:1000*60*60*8,sameSite:'lax',httpOnly:true}));
