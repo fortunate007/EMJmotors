@@ -52,7 +52,8 @@ async function loadDB(){
 async function saveDB(db){const {error}=await sb.from('site_data').upsert({id:1,data:db});if(error)throw error;}
 
 const app=express();
-require('./emj-logo.js')(app);
+app.get("/emj-logo.css",(q,s)=>s.type("text/css").send(".brand,.foot-brand{display:block!important;width:112px!important;height:74px!important;background:url(/emj-logo.png) no-repeat left center/contain!important}.brand>*,.foot-brand>*{display:none!important}"));
+app.get('/emj-logo.png',(q,s)=>s.sendFile(require('path').join(__dirname,'logo.png')));
 app.use(express.json());
 app.use('/uploads',express.static(UPLOAD_DIR));
 app.set('trust proxy',1);app.use(require('cookie-session')({name:'emj_admin',keys:[process.env.SESSION_SECRET||'emj-secret'],maxAge:1000*60*60*8,sameSite:'lax',httpOnly:true}));
@@ -748,7 +749,7 @@ function layout(pageTitle,content){
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="EMJ Motors Nairobi's full-service car dealership. Brand new, foreign used, locally used and custom imports.">
 <title>${pageTitle} — EMJ Motors Ltd</title>
-<link rel="stylesheet" href="/style.css"></head><body>
+<link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/emj-logo.css"></head><body>
 <div id="site">
 ${TICKER_HTML}
 <header><div class="header-inner wrap">
@@ -1060,7 +1061,7 @@ ${pageHeader('Account','Login / Register','Sign in to save favourites, track inq
 function adminHTML(){
   return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EMJ Motors — Admin</title><link rel="stylesheet" href="/style.css"></head><body>
+<title>EMJ Motors — Admin</title><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/emj-logo.css"></head><body>
 <div id="gate" class="gate-wrap" style="display:none;">
   <div class="gate-box">
     <div class="logo-circle" style="margin:0 auto 14px;">E</div>
