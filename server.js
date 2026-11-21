@@ -145,7 +145,45 @@ header{position:sticky;top:0;z-index:60;background:rgba(255,255,255,.94);backdro
 .call-btn{background:var(--dark);color:#fff;border-radius:999px;padding:11px 20px;font-weight:700;font-size:13.5px;display:flex;align-items:center;gap:8px;margin-left:auto;transition:.2s;}
 .call-btn:hover{background:var(--gold);}
 @media(max-width:700px){.brand h1{font-size:16px;}.brand .tag{font-size:9px;letter-spacing:2px;}.call-btn{padding:10px 14px;font-size:12px;}.call-btn span.lbl{display:none;}.logo-circle{width:42px;height:42px;font-size:16px;}}
-@media(max-width:400px){.brand .tag{display:none;}}
+@media(max-width:400px){.brand .tag{display:none;}}/*zen-hero*/
+.hero{background:transparent!important;min-height:0!important;padding:18px 0 6px!important;}
+.hero::before,.hero::after{display:none!important;}
+.hero .wrap>*:not(.filters):not(.filters-row2){display:none!important;}
+.hero .filters,.hero .filters-row2{border:1px solid var(--line);box-shadow:var(--shadow-sm);}
+
+.header-inner .brand{order:1;margin-right:auto;}
+.zen-nav{order:2;display:none;align-items:center;gap:2px;}
+.zen-nav a{color:var(--text);font-weight:600;font-size:15px;padding:10px 12px;border-radius:8px;white-space:nowrap;}
+.zen-nav a:hover,.zen-nav a.on{color:var(--gold);}
+.header-inner .call-btn{order:3;}
+.header-inner .menu-btn{order:4;}
+.zen-cta{order:5;display:none;align-items:center;background:var(--dark);color:#fff;font-weight:800;font-size:14px;letter-spacing:.5px;padding:13px 22px;border-radius:10px;white-space:nowrap;}
+.zen-cta:hover{background:var(--gold);color:#fff;}
+@media(min-width:1000px){
+.header-inner.has-nav .zen-nav{display:flex;}
+.header-inner.has-nav .zen-cta{display:inline-flex;}
+.header-inner.has-nav .menu-btn,.header-inner.has-nav .call-btn{display:none;}
+.top-ticker .ticker-content{display:flex;align-items:center;gap:30px;}
+.top-ticker .ticker-item{position:static;opacity:1;transform:none;pointer-events:auto;}
+.top-ticker .ticker-item:nth-child(1),.top-ticker .ticker-item:nth-child(5){display:none;}
+}
+.zen-feature{max-width:1240px;margin:22px auto 0;padding:0 24px;}
+.zen-feature:empty{display:none;}
+.zf-card{position:relative;background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow-sm);padding:22px;overflow:hidden;}
+.zf-slide{display:none;grid-template-columns:1.25fr 1fr;gap:34px;align-items:center;animation:zfin .6s ease;}
+.zf-slide.on{display:grid;}
+.zf-img{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:14px;background:#eee;display:block;}
+.zf-label{font-size:14px;font-weight:700;color:var(--text);margin-bottom:8px;}
+.zf-title{font-size:clamp(24px,3.2vw,40px);line-height:1.15;font-weight:800;color:var(--text);margin:0 0 14px;}
+.zf-desc{color:var(--muted);font-size:16px;line-height:1.6;margin:0 0 14px;}
+.zf-price{color:var(--gold);font-weight:800;font-size:22px;margin-bottom:18px;}
+.zf-btn{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#fff;font-weight:800;letter-spacing:.5px;padding:15px 30px;border-radius:999px;text-transform:uppercase;font-size:14px;}
+.zf-dots{display:flex;justify-content:center;gap:8px;margin-top:16px;}
+.zf-dots button{width:10px;height:10px;border-radius:10px;border:0;background:var(--line);padding:0;cursor:pointer;transition:all .25s;}
+.zf-dots button.on{background:var(--gold);width:26px;}
+@keyframes zfin{from{opacity:0;transform:translateX(14px);}to{opacity:1;transform:none;}}
+@media(max-width:800px){.zen-feature{padding:0 14px;margin-top:14px;}.zf-card{padding:14px;}.zf-slide.on{grid-template-columns:1fr;gap:16px;}.zf-desc{font-size:14px;}.zf-price{font-size:19px;margin-bottom:14px;}.zf-btn{padding:13px 24px;}}
+
 .hero{background:#14141a url('https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=2000&q=80') center/cover no-repeat;padding:120px 0 100px;position:relative;overflow:hidden;min-height:72vh;display:flex;align-items:center;}
 .hero::before{content:"";position:absolute;inset:0;background:linear-gradient(95deg,rgba(10,10,14,.90) 0%,rgba(10,10,14,.62) 50%,rgba(10,10,14,.28) 100%);z-index:1;pointer-events:none;}
 .hero::after{display:none;}
@@ -403,6 +441,66 @@ const SVG_FB='<svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-1
 const SVG_IG='<svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>';
 const SVG_TT='<svg viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>';
 let SETTINGS={},CARS=[],META={};
+function initZenHeader(){
+  var hi=document.querySelector('header .header-inner');
+  var links=document.querySelectorAll('.sidebar a[href],#sidebar a[href]');
+  if(hi&&links.length){
+    var nav=document.createElement('nav');nav.className='zen-nav';
+    var seen={},n=0;
+    for(var i=0;i<links.length&&n<8;i++){
+      var hr=links[i].getAttribute('href')||'';
+      if(!hr||hr==='#'||hr.indexOf('tel:')===0||hr.indexOf('mailto:')===0||hr.indexOf('http')===0||hr.indexOf('admin')>-1||seen[hr])continue;
+      var t=(links[i].textContent||'').replace(/[^A-Za-z0-9&' ]/g,' ').split(' ').filter(Boolean).join(' ');
+      if(!t)continue;
+      seen[hr]=1;n++;
+      var a=document.createElement('a');a.href=hr;a.textContent=t;
+      if(hr===location.pathname)a.className='on';
+      nav.appendChild(a);
+    }
+    if(n){
+      hi.appendChild(nav);
+      var cta=document.createElement('a');cta.className='zen-cta';cta.href='/contact';cta.textContent='SEND INQUIRY';
+      hi.appendChild(cta);hi.classList.add('has-nav');
+    }
+  }
+  var box=document.getElementById('carFeature');if(!box)return;
+  if(location.pathname!=='/'){box.parentNode.removeChild(box);return;}
+  fetch('/api/cars').then(function(r){return r.json();}).then(function(d){
+    var list=(Array.isArray(d)?d:(d.cars||[])).filter(function(c){return c&&!c.sold&&c.photos&&c.photos[0];}).slice(0,8);
+    if(!list.length)return;
+    var card=document.createElement('div');card.className='zf-card';
+    var slides=[],dots=[],idx=0,timer=null;
+    list.forEach(function(c,k){
+      var sl=document.createElement('div');sl.className='zf-slide';
+      var im=document.createElement('img');im.className='zf-img';
+      im.alt=[c.year,c.make,c.model].filter(Boolean).join(' ');im.src=c.photos[0];if(k>0)im.loading='lazy';
+      var tx=document.createElement('div');
+      var lb=document.createElement('div');lb.className='zf-label';lb.textContent='Featured Car';
+      var h2=document.createElement('h2');h2.className='zf-title';h2.textContent=im.alt;
+      var p=document.createElement('p');p.className='zf-desc';
+      var ds=(c.desc||'').trim();
+      p.textContent=ds?(ds.length>150?ds.slice(0,150)+'…':ds):'Inspect the full details of this car. Contact our team to confirm availability and arrange a viewing.';
+      tx.appendChild(lb);tx.appendChild(h2);tx.appendChild(p);
+      if(c.price>0){var pr=document.createElement('div');pr.className='zf-price';pr.textContent='KSh '+Number(c.price).toLocaleString('en-KE');tx.appendChild(pr);}
+      var bt=document.createElement('a');bt.className='zf-btn';bt.href='/';bt.textContent='View Details →';
+      tx.appendChild(bt);sl.appendChild(im);sl.appendChild(tx);card.appendChild(sl);slides.push(sl);
+    });
+    function go(i){idx=(i+slides.length)%slides.length;slides.forEach(function(sl,k){sl.classList.toggle('on',k===idx);});dots.forEach(function(dt,k){dt.classList.toggle('on',k===idx);});}
+    function start(){if(timer)clearInterval(timer);if(slides.length>1)timer=setInterval(function(){go(idx+1);},5500);}
+    if(list.length>1){
+      var dw=document.createElement('div');dw.className='zf-dots';
+      list.forEach(function(c,k){var db=document.createElement('button');db.setAttribute('aria-label','Show car '+(k+1));db.onclick=function(){go(k);start();};dw.appendChild(db);dots.push(db);});
+      card.appendChild(dw);
+    }
+    card.addEventListener('mouseenter',function(){if(timer)clearInterval(timer);});
+    card.addEventListener('mouseleave',start);
+    var x0=null;
+    card.addEventListener('touchstart',function(e){x0=e.touches[0].clientX;},{passive:true});
+    card.addEventListener('touchend',function(e){if(x0===null)return;var dx=e.changedTouches[0].clientX-x0;x0=null;if(Math.abs(dx)>40){go(idx+(dx<0?1:-1));start();}},{passive:true});
+    box.appendChild(card);go(0);start();
+  }).catch(function(){});
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initZenHeader);else initZenHeader();
 function initTicker(){const items=document.querySelectorAll('.ticker-item');if(!items.length)return;let i=0;setInterval(()=>{items[i].classList.remove('active');i=(i+1)%items.length;items[i].classList.add('active');},3800);}
 function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('sidebarOverlay').classList.add('open');document.body.style.overflow='hidden';}
 function closeSidebar(){const s=document.getElementById('sidebar'),o=document.getElementById('sidebarOverlay');if(s)s.classList.remove('open');if(o)o.classList.remove('open');document.body.style.overflow='';}
@@ -749,7 +847,7 @@ function layout(pageTitle,content){
   return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="EMJ Motors Nairobi's full-service car dealership. Brand new, foreign used, locally used and custom imports.">
-<title>${pageTitle} — EMJ Motors Ltd</title>
+<title>${pageTitle} | EMJ Motors Ltd</title>
 <link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/emj-logo.css"><link rel="icon" type="image/png" href="/favicon.png"></head><body>
 <div id="site">
 ${TICKER_HTML}
@@ -760,6 +858,7 @@ ${TICKER_HTML}
   </div>
   <a class="call-btn" id="headerPhone" href="tel:+254799566458">📞 <span class="lbl">+254 799 566 458</span></a>
 </div></header>
+<div class="zen-feature" id="carFeature"></div>
 ${content}
 <footer><div class="wrap">
   <div class="foot-grid">
